@@ -9,6 +9,27 @@ static void getInput(std::string &input, const char *message) {
         exit(0);
 }
 
+static const auto alphaValid = [](const std::string &nickname) {
+    const bool valid = std::all_of(nickname.begin(), nickname.end(), isalpha);
+    if (!valid)
+        std::cout << RED << "The input should be only alphabetic characters." << RESET << std::endl;
+    return valid;
+};
+
+static const auto nicknameValid = [](const std::string &nickname) {
+    const bool valid = std::all_of(nickname.begin(), nickname.end(), isalnum);
+    if (!valid)
+        std::cout << RED << "The input should be only alphanumeric characters." << RESET << std::endl;
+    return valid;
+};
+
+static const auto phoneValid = [](const std::string &phone) {
+    const bool valid = std::all_of(phone.begin(), phone.end(), isdigit);
+    if (!valid)
+        std::cout << RED << "The input should be only numeric characters." << RESET << std::endl;
+    return valid;
+};
+
 static void getNonEmptyInput(std::string &input, const char *message, bool (*is_valid)(const std::string &)) {
     while(true) {
         getInput(input, message);
@@ -16,7 +37,7 @@ static void getNonEmptyInput(std::string &input, const char *message, bool (*is_
             std::cout << RED << "Input cannot be empty." << RESET << std::endl;
             continue;
         }
-        if (is_valid(input))
+        if (!is_valid || is_valid(input))
             return;
     }
 }
@@ -29,37 +50,11 @@ static void executeCommand(const std::string &command, PhoneBook &phoneBook) {
         std::string phone_number;
         std::string secret;
 
-        auto alpha_valid = [](const std::string &nickname) {
-            const bool valid = std::all_of(nickname.begin(), nickname.end(), isalpha);
-            if (!valid)
-                std::cout << RED << "The input should be only alphabetic characters." << RESET << std::endl;
-            return valid;
-        };
-
-        auto nickname_valid = [](const std::string &nickname) {
-            const bool valid = std::all_of(nickname.begin(), nickname.end(), isalnum);
-            if (!valid)
-                std::cout << RED << "The input should be only alphanumeric characters." << RESET << std::endl;
-            return valid;
-        };
-
-        auto phone_valid = [](const std::string &phone) {
-            const bool valid = std::all_of(phone.begin(), phone.end(), isdigit);
-            if (!valid)
-                std::cout << RED << "The input should be only numeric characters." << RESET << std::endl;
-            return valid;
-        };
-
-        auto empty_valid = [](const std::string &input) {
-            (void) input;
-            return true;
-        };
-
-        getNonEmptyInput(first_name, "Enter first name: ", alpha_valid);
-        getNonEmptyInput(last_name, "Enter last name: ", alpha_valid);
-        getNonEmptyInput(nickname, "Enter nickname: ", nickname_valid);
-        getNonEmptyInput(phone_number, "Enter phone number: ", phone_valid);
-        getNonEmptyInput(secret, "Enter secret: ", empty_valid);
+        getNonEmptyInput(first_name, "Enter first name: ", alphaValid);
+        getNonEmptyInput(last_name, "Enter last name: ", alphaValid);
+        getNonEmptyInput(nickname, "Enter nickname: ", nicknameValid);
+        getNonEmptyInput(phone_number, "Enter phone number: ", phoneValid);
+        getNonEmptyInput(secret, "Enter secret: ", nullptr);
 
         phoneBook.addContact(Contact(first_name, last_name, nickname, phone_number, secret));
         std::cout << GREEN << "Contact added successfully." << RESET << std::endl;
