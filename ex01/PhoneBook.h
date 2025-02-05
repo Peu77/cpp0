@@ -12,7 +12,7 @@ public:
     PhoneBook();
 
     void addContact(const Contact &contact);
-    void search_contact(const std::string &search);
+    void search_contact(const std::string &search) const;
     void print_contacts() const;
 
 private:

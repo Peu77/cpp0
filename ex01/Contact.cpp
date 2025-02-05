@@ -4,6 +4,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include "colors.h"
 
 Contact::Contact()
 {
@@ -21,7 +22,7 @@ Contact::Contact(const std::string &first_name,
 {
 }
 
-void Contact::printInfo(const int id) const {
+void Contact::printAsColumn(const int id) const {
     auto formatField = [](const std::string &field) {
         if (field.length() > 9)
             return field.substr(0, 9) + ".";
@@ -38,3 +39,20 @@ void Contact::printInfo(const int id) const {
             std::cout << "|";
     }
 }
+
+void Contact::printFull() const {
+    std::cout << std::string(50, '-') << std::endl;
+    std::cout << "First Name: " << GREEN << first_name << RESET << std::endl;
+    std::cout << "Last Name: " << GREEN << last_name << RESET << std::endl;
+    std::cout << "Nickname: " << GREEN << nickname << RESET << std::endl;
+    std::cout << "Phone Number: " << GREEN << phone_number << RESET << std::endl;
+    std::cout << "Secret: " << GREEN << secret << RESET << std::endl;
+    std::cout << std::string(50, '-') << std::endl;
+}
+
+bool Contact::hasName() const {
+    return !first_name.empty();
+}
+
+
+

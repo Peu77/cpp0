@@ -30,6 +30,20 @@ static const auto phoneValid = [](const std::string &phone) {
     return valid;
 };
 
+static bool isValidContactIndex(const std::string &index) {
+    if(!std::all_of(index.begin(), index.end(), isdigit)) {
+        std::cout << RED << "The input should be only numeric characters." << RESET << std::endl;
+        return false;
+    }
+
+    const int i = std::stoi(index);
+    if(i < 0 || i >= MAX_CONTACTS || index.length() > 1) {
+        std::cout << RED << "The index should be in the range of 0 to " << MAX_CONTACTS << "." << RESET << std::endl;
+        return false;
+    }
+    return true;
+}
+
 static void getNonEmptyInput(std::string &input, const char *message, bool (*is_valid)(const std::string &)) {
     while(true) {
         getInput(input, message);
@@ -61,8 +75,11 @@ static void executeCommand(const std::string &command, PhoneBook &phoneBook) {
         return;
     }
 
-    if (command == "PRINT") {
+    if (command == "SEARCH") {
         phoneBook.print_contacts();
+        std::string search;
+        getNonEmptyInput(search, "Enter index: ", isValidContactIndex);
+        phoneBook.search_contact(search);
         return;
     }
 

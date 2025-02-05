@@ -13,7 +13,10 @@ public:
             const std::string &phone_number,
             const std::string &secret);
 
-    void printInfo(int id) const;
+    void printAsColumn(int id) const;
+    void printFull() const;
+    bool hasName() const;
+
 
 private:
     std::string first_name;
