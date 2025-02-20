@@ -6,25 +6,22 @@
 #include "colors.h"
 
 
-PhoneBook::PhoneBook(): contacts_count(0) {
+PhoneBook::PhoneBook(): contacts_index(0) {
     for (auto &contact: this->contacts)
         contact = Contact();
 }
 
 void PhoneBook::addContact(const Contact &contact) {
-    this->contacts[this->contacts_count] = contact;
+    this->contacts[this->contacts_index] = contact;
 
-    this->contacts_count++;
-    if (this->contacts_count == MAX_CONTACTS)
-        this->contacts_count = 0;
+    this->contacts_index++;
+    if (this->contacts_index == MAX_CONTACTS)
+        this->contacts_index = 0;
+    if(this->contacs_count < MAX_CONTACTS)
+        this->contacs_count++;
 }
 
 void PhoneBook::print_contacts() const {
-    if (!this->contacts[0].hasName()) {
-        std::cout << "No contacts to display." << std::endl;
-        return;
-    }
-
     std::string headers[] = {"Index", "First Name", "Last Name", "Nickname"};
 
     for (const std::string &header: headers) {
@@ -37,7 +34,7 @@ void PhoneBook::print_contacts() const {
 
     std::cout << std::string(50, '-') << std::endl;
 
-    for (int i = 0; i < this->contacts_count; i++)
+    for (int i = 0; i < this->contacs_count; i++)
         this->contacts[i].printAsColumn(i);
 }
 
@@ -45,4 +42,13 @@ void PhoneBook::search_contact(const std::string &search) const {
     const int index = std::stoi(search);
     this->contacts[index].printFull();
 }
+
+bool PhoneBook::hasContacts() const {
+    return this->contacts[0].hasName();
+}
+
+int PhoneBook::getContactsCount() const {
+    return this->contacs_count;
+}
+
 

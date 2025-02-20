@@ -2,6 +2,8 @@
 #include "PhoneBook.h"
 #include "colors.h"
 
+PhoneBook phoneBook;
+
 static void getInput(std::string &input, const char *message) {
     std::cout << message;
     std::getline(std::cin, input);
@@ -30,20 +32,6 @@ static const auto phoneValid = [](const std::string &phone) {
     return valid;
 };
 
-static bool isValidContactIndex(const std::string &index) {
-    if(!std::all_of(index.begin(), index.end(), isdigit)) {
-        std::cout << RED << "The input should be only numeric characters." << RESET << std::endl;
-        return false;
-    }
-
-    const int i = std::stoi(index);
-    if(i < 0 || i >= MAX_CONTACTS || index.length() > 1) {
-        std::cout << RED << "The index should be in the range of 0 to " << MAX_CONTACTS << "." << RESET << std::endl;
-        return false;
-    }
-    return true;
-}
-
 static void getNonEmptyInput(std::string &input, const char *message, bool (*is_valid)(const std::string &)) {
     while(true) {
         getInput(input, message);
@@ -56,7 +44,7 @@ static void getNonEmptyInput(std::string &input, const char *message, bool (*is_
     }
 }
 
-static void executeCommand(const std::string &command, PhoneBook &phoneBook) {
+static void executeCommand(const std::string &command) {
     if (command == "ADD") {
         std::string first_name;
         std::string last_name;
@@ -76,7 +64,26 @@ static void executeCommand(const std::string &command, PhoneBook &phoneBook) {
     }
 
     if (command == "SEARCH") {
+        if (!phoneBook.hasContacts()) {
+            std::cout << RED << "No contacts to display." << RESET << std::endl;
+            return;
+        }
         phoneBook.print_contacts();
+
+        const auto isValidContactIndex = [](const std::string &index) {
+            if(!std::all_of(index.begin(), index.end(), isdigit)) {
+                std::cout << RED << "The input should be only numeric characters." << RESET << std::endl;
+                return false;
+            }
+
+            const int i = std::stoi(index);
+            if(i < 0 || i >= phoneBook.getContactsCount() || index.length() > 1) {
+                std::cout << RED << "The index should be in the range of 0 to " << phoneBook.getContactsCount() - 1 << "." << RESET << std::endl;
+                return false;
+            }
+            return true;
+        };
+
         std::string search;
         getNonEmptyInput(search, "Enter index: ", isValidContactIndex);
         phoneBook.search_contact(search);
@@ -90,11 +97,10 @@ static void executeCommand(const std::string &command, PhoneBook &phoneBook) {
 }
 
 int main() {
-    PhoneBook phoneBook;
     while (true) {
         std::string command;
         getInput(command, "Enter command: ");
 
-        executeCommand(command, phoneBook);
+        executeCommand(command);
     }
 }
